@@ -25,11 +25,9 @@ try:
     total = main.find_element_by_class_name("_33O9dg0j")
 
     # Get Reviews
-    reviews = driver.find_elements_by_xpath(
-        "//div[@class='_2wrUUKlw _3hFEdNs8']")
+    reviews = driver.find_elements_by_xpath("//div[@class='_2wrUUKlw _3hFEdNs8']")
     review_list = []
-    headers = title.text + "," + \
-        address[0] + "," + address[1] + "," + total.text
+    headers = title.text + "," + address[0] + "," + address[1] + "," + total.text
 
     for review in reviews:
         location = review.find_element_by_class_name("_1EpRX7o3")
@@ -37,13 +35,11 @@ try:
         if "contribution" in location:
             location = "None"
         text = review.find_element_by_tag_name("q").text
-        date_of_stay = review.find_element_by_class_name(
-            "_34Xs-BQm").text.split(":")[1]
+        date_of_stay = review.find_element_by_class_name("_34Xs-BQm").text.split(":")[1]
 
         # Toggle Review Details
         test = WebDriverWait(review, 10).until(
-            EC.presence_of_element_located(
-                (By.XPATH, '//div[@class="XUVJZtom"]'))
+            EC.presence_of_element_located((By.XPATH, '//div[@class="XUVJZtom"]'))
         )
         try:
             test.click()
@@ -51,14 +47,15 @@ try:
             pass
         # Wait for the reload of element then grab it again
         test = WebDriverWait(review, 10).until(
-            EC.presence_of_element_located(
-                (By.XPATH, '//span[@class="_1fSlsEgr"]'))
+            EC.presence_of_element_located((By.XPATH, '//span[@class="_1fSlsEgr"]'))
         )
         trip_type = ""
         room_tip = ""
         try:
             trip_type = review.find_element_by_class_name("_2bVY3aT5").text
-            room_tip = review.find_element_by_class_name("_1Dn9wASK").text
+            room_tip = review.find_element_by_xpath(
+                "//div[@class='_1Dn9wASK']/span[2]"
+            ).text
         except:
             trip_type = "none"
             room_tip = "none"
