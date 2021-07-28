@@ -25,7 +25,8 @@ try:
     total = main.find_element_by_class_name("_33O9dg0j")
 
     # Get Reviews
-    reviews = driver.find_elements_by_xpath("//div[@class='_2wrUUKlw _3hFEdNs8']")
+    reviews = driver.find_elements_by_xpath(
+        "//div[@class='_2wrUUKlw _3hFEdNs8']")
     review_list = []
     metadata = {
         "Property": title.text,
@@ -45,11 +46,14 @@ try:
             location = "None"
 
         text = review.find_element_by_tag_name("q").text
-        date_of_stay = review.find_element_by_class_name("_34Xs-BQm").text.split(":")[1]
+        date_of_stay = review.find_element_by_class_name(
+            "_34Xs-BQm").text.split(":")[1]
 
         # Toggle Review Details
+        # All Element
         test = WebDriverWait(review, 10).until(
-            EC.presence_of_element_located((By.XPATH, '//div[@class="XUVJZtom"]'))
+            EC.presence_of_element_located(
+                (By.XPATH, '//div[@class="XUVJZtom"]'))
         )
         try:
             test.click()
@@ -57,7 +61,8 @@ try:
             pass
         # Wait for the reload of element then grab it again
         test = WebDriverWait(review, 10).until(
-            EC.presence_of_element_located((By.XPATH, '//span[@class="_1fSlsEgr"]'))
+            EC.presence_of_element_located(
+                (By.XPATH, '//span[@class="_1fSlsEgr"]'))
         )
         trip_type = ""
         room_tip = ""
@@ -75,14 +80,20 @@ try:
         overall_rating = overall_rating.find_element_by_tag_name("span").get_attribute(
             "class"
         )
-        overall_rating = int(overall_rating.replace("ui_bubble_rating bubble_", "")[0])
+        overall_rating = int(overall_rating.replace(
+            "ui_bubble_rating bubble_", "")[0])
 
         rating_details = review.find_elements_by_class_name("_3ErKuh24")
 
+        # Rate Types
+        rate_types = {}
         for details in rating_details:
-            pass
-
-
+            label = details.text
+            rate = details.find_element_by_xpath(
+                '//span[@class="_3-8hSrXs"]/span')
+            rate = rate.get_attribute('class').replace(
+                'ui_bubble_rating bubble_', '')[0]
+            rate_types[label] = rate
 
         review_item = {
             "location": location,
@@ -100,6 +111,7 @@ try:
         }
 
         review_list.append(review_item)
+        review_list.append(rate_types)
 
     df = pd.DataFrame(review_list)
 
