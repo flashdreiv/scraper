@@ -25,38 +25,31 @@ try:
     total = main.find_element_by_class_name("_33O9dg0j")
 
     # Get Reviews
-    reviews = driver.find_elements_by_xpath(
-        "//div[@class='_2wrUUKlw _3hFEdNs8']")
+    reviews = driver.find_elements_by_xpath("//div[@class='_2wrUUKlw _3hFEdNs8']")
     review_list = []
-    headers = []
     metadata = {
-        'Property': title.text,
-        'Address': address[0],
-        'City': address[1],
-        'State': 'null',
-        'Title': driver.title,
-        'Url': driver.current_url,
-        'Total # of Reviews': total.text
+        "Property": title.text,
+        "Address": address[0],
+        "City": address[1],
+        "State": "null",
+        "Title": driver.title,
+        "Url": driver.current_url,
+        "Total # of Reviews": total.text,
     }
-    headers.append(metadata)
-
+    review_list.append(metadata)
     for review in reviews:
-        location = review.find_element_by_class_name("_1EpRX7o3")
+        # location = review.find_element_by_class_name("_1EpRX7o3")
         try:
-            location = location.find_element_by_class_name("_1TuWwpYf").text
-            if "contribution" in location:
-                location = "None"
+            location = review.find_element_by_class_name("_1TuWwpYf").text
         except:
-            pass
+            location = "None"
 
         text = review.find_element_by_tag_name("q").text
-        date_of_stay = review.find_element_by_class_name(
-            "_34Xs-BQm").text.split(":")[1]
+        date_of_stay = review.find_element_by_class_name("_34Xs-BQm").text.split(":")[1]
 
         # Toggle Review Details
         test = WebDriverWait(review, 10).until(
-            EC.presence_of_element_located(
-                (By.XPATH, '//div[@class="XUVJZtom"]'))
+            EC.presence_of_element_located((By.XPATH, '//div[@class="XUVJZtom"]'))
         )
         try:
             test.click()
@@ -64,8 +57,7 @@ try:
             pass
         # Wait for the reload of element then grab it again
         test = WebDriverWait(review, 10).until(
-            EC.presence_of_element_located(
-                (By.XPATH, '//span[@class="_1fSlsEgr"]'))
+            EC.presence_of_element_located((By.XPATH, '//span[@class="_1fSlsEgr"]'))
         )
         trip_type = ""
         room_tip = ""
@@ -74,10 +66,23 @@ try:
         except:
             trip_type = "none"
         try:
-            room_tip = review.find_element_by_class_name('_1Dn9wASK').text
-            room_tip = room_tip.replace('Room Tip:', '')
+            room_tip = review.find_element_by_class_name("_1Dn9wASK").text
+            room_tip = room_tip.replace("Room Tip:", "")
         except:
             room_tip = "none"
+
+        overall_rating = review.find_element_by_class_name("nf9vGX55")
+        overall_rating = overall_rating.find_element_by_tag_name("span").get_attribute(
+            "class"
+        )
+        overall_rating = int(overall_rating.replace("ui_bubble_rating bubble_", "")[0])
+
+        rating_details = review.find_elements_by_class_name("_3ErKuh24")
+
+        for details in rating_details:
+            pass
+
+
 
         review_item = {
             "location": location,
@@ -85,14 +90,20 @@ try:
             "Date of Stay": date_of_stay,
             "Trip Type": trip_type,
             "Room Tip": room_tip,
+            "Overall Rating": overall_rating,
+            "Value": 5,
+            "Location": 5,
+            "Service": 5,
+            "Rooms": 5,
+            "Cleanliness": 5,
+            "Sleep Quality": 5,
         }
-        review_list.append(headers)
+
         review_list.append(review_item)
 
     df = pd.DataFrame(review_list)
-    df.sort_values(by='col1', ascending=False)
 
-    df.to_csv("hotelReviews.csv", index=1, encoding="utf-8")
+    df.to_csv("hotelReviews.csv", encoding="utf-8")
 
 
 finally:
