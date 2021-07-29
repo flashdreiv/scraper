@@ -25,8 +25,6 @@ try:
     address = address.text.split(",")
     total = main.find_element_by_class_name("_33O9dg0j")
 
-    # Get Reviews
-    reviews = driver.find_elements_by_xpath("//div[@class='_2wrUUKlw _3hFEdNs8']")
     hotel_list = []
     hotel = {
         "Property": title.text,
@@ -38,6 +36,8 @@ try:
         "Total # of Reviews": total.text,
     }
     for i in range(3):
+        # Get Reviews
+        reviews = driver.find_elements_by_xpath("//div[@class='_2wrUUKlw _3hFEdNs8']")
         for review in reviews:
             try:
                 location = review.find_element_by_class_name("_1TuWwpYf").text
