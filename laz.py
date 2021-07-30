@@ -3,18 +3,18 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.firefox.options import Options
+
 
 import pandas as pd
+import time
 
 
-options = Options()
-options.add_argument('-headless')
 url = "https://www.tripadvisor.com.ph/Hotel_Review-g47685-d93179-Reviews-Hampton_Inn_White_Plains_Tarrytown-Elmsford_New_York.html#REVIEWS"
 
 driver = webdriver.Chrome()
 driver.get(url)
 
+# Watch these: https://www.youtube.com/watch?v=wCoTJdhRcQE
 
 
 try:
@@ -41,12 +41,17 @@ try:
     }
     for i in range(2):
         # Get Reviews
-        reviews = driver.find_elements_by_xpath("//div[@class='_2wrUUKlw _3hFEdNs8']")
+        # reviews = driver.find_elements_by_xpath("//div[@class='_2wrUUKlw _3hFEdNs8']")
+        reviews = WebDriverWait(driver, 10).until(
+            EC.presence_of_all_elements_located(
+                (By.XPATH, "//div[@class='_2wrUUKlw _3hFEdNs8']")
+            )
+        )
         # Toggle Review Details
         # All Element
         test = (
             WebDriverWait(driver, 10)
-            .until(EC.element_to_be_clickable((By.XPATH, '//span[@class="_3maEfNCR"]')))
+            .until(EC.element_to_be_clickable((By.XPATH, '//div[@class="XUVJZtom"]')))
             .click()
         )
         # Wait for the reload of element then grab it again
@@ -109,14 +114,9 @@ try:
             hotel_list.append(hotel)
             next = (
                 WebDriverWait(driver, 10)
-                .until(
-                    EC.element_to_be_clickable(
-                        (By.XPATH, '//div[@class="_16gKMTFp"]/div/a[@class="next"]')
-                    )
-                )
+                .until(EC.element_to_be_clickable((By.CLASS_NAME, "next")))
                 .click()
             )
-            driver.implicitly_wait(3)
 
         df = pd.DataFrame(hotel_list)
     df.to_csv("hotelReviews.csv", index=0, encoding="utf-8")
