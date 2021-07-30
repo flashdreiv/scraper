@@ -11,10 +11,11 @@ import time
 
 url = "https://www.tripadvisor.com.ph/Hotel_Review-g47685-d93179-Reviews-Hampton_Inn_White_Plains_Tarrytown-Elmsford_New_York.html#REVIEWS"
 
-driver = webdriver.Chrome()
-driver.get(url)
+opts = webdriver.ChromeOptions()
+opts.headless = True
 
-# Watch these: https://www.youtube.com/watch?v=wCoTJdhRcQE
+driver = webdriver.Chrome(options=opts)
+driver.get(url)
 
 
 try:
@@ -49,13 +50,20 @@ try:
         )
         # Toggle Review Details
         # All Element
-        test = (
+        read_more = (
             WebDriverWait(driver, 10)
-            .until(EC.element_to_be_clickable((By.XPATH, '//div[@class="XUVJZtom"]')))
+            .until(
+                EC.element_to_be_clickable(
+                    (
+                        By.XPATH,
+                        '//*[@id="component_14"]/div/div[3]/div[7]/div[2]/div[3]/div[1]/div[2]/div/span[1]',
+                    )
+                )
+            )
             .click()
         )
         # Wait for the reload of element then grab it again
-        test = WebDriverWait(driver, 10).until(
+        read_less = WebDriverWait(driver, 10).until(
             EC.element_to_be_clickable((By.XPATH, '//span[@class="_1fSlsEgr"]'))
         )
         for review in reviews:
@@ -112,13 +120,13 @@ try:
             hotel.update(review_item)
             hotel.update(rate_types)
             hotel_list.append(hotel)
-            next = (
-                WebDriverWait(driver, 10)
-                .until(EC.element_to_be_clickable((By.CLASS_NAME, "next")))
-                .click()
-            )
+        next = (
+            WebDriverWait(driver, 10)
+            .until(EC.element_to_be_clickable((By.CLASS_NAME, "next")))
+            .click()
+        )
 
-        df = pd.DataFrame(hotel_list)
+    df = pd.DataFrame(hotel_list)
     df.to_csv("hotelReviews.csv", index=0, encoding="utf-8")
 
 finally:
