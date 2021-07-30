@@ -12,7 +12,7 @@ options = Options()
 options.add_argument('-headless')
 url = "https://www.tripadvisor.com.ph/Hotel_Review-g47685-d93179-Reviews-Hampton_Inn_White_Plains_Tarrytown-Elmsford_New_York.html#REVIEWS"
 
-driver = webdriver.Chrome()
+driver = webdriver.Chrome(chrome_options=options)
 driver.get(url)
 
 
