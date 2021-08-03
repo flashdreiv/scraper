@@ -14,7 +14,7 @@ url = "https://www.tripadvisor.com.ph/Hotel_Review-g47685-d93179-Reviews-Hampton
 opts = webdriver.ChromeOptions()
 opts.headless = True
 
-driver = webdriver.Chrome(options=opts)
+driver = webdriver.Chrome()
 
 driver.get(url)
 
