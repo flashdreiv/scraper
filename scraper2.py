@@ -28,14 +28,18 @@ try:
         for tr in body:
             code = tr.find_elements_by_tag_name("td")[0].text or "none"
             name = tr.find_elements_by_tag_name("td")[1].text or "none"
-            # website = tr.find_elements_by_tag_name("td")[2].text or "none"
+            website = tr.find_elements_by_tag_name("td")[2] or "none"
+            website = (
+                website.find_element_by_xpath("//child::li").get_attribute("href")
+                or "none"
+            )
             general_enquiries = tr.find_elements_by_tag_name("td")[3].text or "none"
             registration = tr.find_elements_by_tag_name("td")[4].text or "none"
 
             item = {
                 "Code": code,
                 "Name": name,
-                # "Website": website,
+                "Website": website,
                 "General Inquiries": general_enquiries,
                 "Registration": registration,
             }
