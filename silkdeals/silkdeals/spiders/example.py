@@ -1,5 +1,7 @@
 import scrapy
+from scrapy.selector import Selector
 from scrapy_selenium import SeleniumRequest
+from selenium.webdriver.common.keys import Keys
 
 
 class ExampleSpider(scrapy.Spider):
@@ -7,7 +9,7 @@ class ExampleSpider(scrapy.Spider):
 
     def start_requests(self):
         yield SeleniumRequest(
-            url="https://www.duckduckgo.com",
+            url="https://duckduckgo.com",
             wait_time=3,
             screenshot=True,
             callback=self.parse,
@@ -15,4 +17,14 @@ class ExampleSpider(scrapy.Spider):
 
     def parse(self, response):
         driver = response.meta["driver"]
-        search_input = driver.find_element_
+        search_input = driver.find_element_by_id("search_form_input_homepage")
+        search_input.send_keys("hello World")
+        search_input.send_keys(Keys.ENTER)
+
+        html = driver.page_source
+        response_obj = Selector(text=html)
+
+        links = response_obj.xpath("//a[@class='result__a js-result-title-link']")
+
+        for link in links:
+            yield {"URL": link.xpath(".//@href").get()}
