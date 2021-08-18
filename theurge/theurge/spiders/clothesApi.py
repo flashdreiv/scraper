@@ -4,7 +4,7 @@ import json
 
 class ClothesapiSpider(scrapy.Spider):
     name = "clothesApi"
-    allowed_domains = ["https://api.theurge.com/search-results?page=1"]
+    allowed_domains = ["api.theurge.com"] # must not have http
     start_urls = [
         "https://api.theurge.com/search-results?page=1&currency=USD&gender=female&retailers=Tuchuzy&language=en&country=us&client=theurge"
     ]
@@ -21,10 +21,10 @@ class ClothesapiSpider(scrapy.Spider):
             yield {
                 "image_url": product["attributes"]["e_image_urls_og"],
                 "product_name": product["attributes"]["product_name"],
-                "price": product["attributes"]["converted_sale_price"],
+                "price": product["attributes"]["converted_retailer_price"] or product["attributes"]["converted_sale_price"],
             }
 
-        for i in range(2, max_page):
+        for i in range(2, max_page+1):
             yield scrapy.Request(
                 url=f"https://api.theurge.com/search-results?page={i}&currency=USD&gender=female&retailers=Tuchuzy&language=en&country=us&client=theurge",
                 callback=self.parse,
